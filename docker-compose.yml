@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+
+  nginx1:
+    container_name: nginx1
+    image: nginx:1.19.5-alpine
+    restart: unless-stopped
+    ports:
+      - 8001:8001
+    volumes:
+      - ./nginx1/nginx.conf:/etc/nginx/conf.d/nginx_app1.conf
+      - ./nginx1/log:/var/log/nginx     
+    networks: 
+      - app1
+
+  nginx2:
+    container_name: nginx2
+    image: nginx:1.19.5-alpine
+    restart: unless-stopped
+    ports:
+      - 8002:8002
+    volumes:
+      - ./nginx2/nginx.conf:/etc/nginx/conf.d/nginx_app2.conf
+      - ./nginx2/log:/var/log/nginx
+    networks:
+      - app2
+
+  monit:
+    container_name: grafana
+    image: grafana/grafana:7.3
+    restart: unless-stopped
+    volumes:
+      - ./grafana/etc:/etc/grafana
+      - ./grafana/log:/var/log/grafana
+
