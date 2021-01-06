@@ -9,9 +9,9 @@ services:
     ports:
       - 8001:8001
     volumes:
-      - ./nginx1/nginx.conf:/etc/nginx/conf.d/nginx_app1.conf
+      - ./nginx1/nginx.conf:/etc/nginx/conf.d/nginx1.conf
       - ./nginx1/log:/var/log/nginx     
-    networks: 
+    networks:
       - app1
 
   nginx2:
@@ -21,16 +21,25 @@ services:
     ports:
       - 8002:8002
     volumes:
-      - ./nginx2/nginx.conf:/etc/nginx/conf.d/nginx_app2.conf
+      - ./nginx2/nginx.conf:/etc/nginx/conf.d/nginx2.conf
       - ./nginx2/log:/var/log/nginx
     networks:
       - app2
 
-  monit:
+  grafana:
     container_name: grafana
-    image: grafana/grafana:7.3
+    image: grafana/grafana:7.3.6
     restart: unless-stopped
     volumes:
-      - ./grafana/etc:/etc/grafana
       - ./grafana/log:/var/log/grafana
+    networks:
+      - app1
+      - app2
 
+networks:
+  app1:
+    external:
+      name: app1
+  app2:
+    external:
+      name: app2
