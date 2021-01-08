@@ -1,0 +1,54 @@
+version: '3.3'
+
+services:
+
+  nginx1:
+    container_name: nginx1
+    image: nginx:1.19.5-alpine
+    restart: unless-stopped
+    ports:
+      - 8001:80
+    volumes:
+      - nginx_conf:/etc/nginx/conf.d/
+      - ./nginx1/log:/var/log/nginx     
+    networks:
+      - app1
+
+  nginx2:
+    container_name: nginx2
+    image: nginx:1.19.5-alpine
+    restart: unless-stopped
+    ports:
+      - 8002:80
+    volumes:
+      - nginx_conf:/etc/nginx/conf.d/
+      - ./nginx2/log:/var/log/nginx
+    networks:
+      - app2
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:7.3.6
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -O /dev/null http://nginx1 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ./grafana/log:/var/log/grafana
+    networks:
+      - app1
+      - app2
+
+volumes:
+  nginx_conf:
+    external: true
+
+networks:
+  app1:
+    external:
+      name: app1
+  app2:
+    external:
+      name: app2
