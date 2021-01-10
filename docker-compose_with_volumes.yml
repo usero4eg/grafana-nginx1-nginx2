@@ -43,7 +43,11 @@ services:
 
 volumes:
   nginx_conf:
-    external: true
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./conf
 
 networks:
   app1:
